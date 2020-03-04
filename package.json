@@ -1,0 +1,23 @@
+{
+  "name": "assignment-6-siddhartha-1212",
+  "version": "1.0.0",
+  "description": "Google Sheet app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scss": "node-sass --watch style -o dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neu-mis-info6150-spring-2020/assignment-6-siddhartha-1212.git"
+  },
+  "author": "Siddhartha Raju",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neu-mis-info6150-spring-2020/assignment-6-siddhartha-1212/issues"
+  },
+  "homepage": "https://github.com/neu-mis-info6150-spring-2020/assignment-6-siddhartha-1212#readme",
+  "dependencies": {
+    "node-sass": "^4.13.1"
+  }
+}
