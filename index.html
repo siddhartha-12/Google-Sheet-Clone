@@ -14,9 +14,11 @@
 <button name="btnAddRow" id="btnAddRow" onclick="addRow()">Add Row</button>
 &nbsp;
 <button name="btnDeleteRow" id="btnDelteRow" onclick="deleteRow()">Delete Row</button>
+&nbsp;
+<button name="btnAddCol" id="btnAddCol" onclick="addColumn()">Add Column</button>
 <br>
 <br>
-    <tr>
+    <tr id="tblHeader">
         <th onclick="indexer(this)"></th>
         <th onclick="indexer(this)">A</th>
 
@@ -40,6 +42,6 @@
 <p id="tr"></p>
 <p id="td"></p>
 <p id="rowCheck"></p>
-<p id="td"></p>
+<p id="colCheck"></p>
 </body>
 </html>

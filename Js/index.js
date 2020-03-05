@@ -85,7 +85,44 @@ function addRow() {
   }
 
   function addColumn(){
-    let table = document.getElementById("table");
+
+    var row = document.getElementById("tblHeader");
+        if(window.columnIndex==undefined || window.columnIndex==-1)
+        {
+           // let colIn = window.table.rows[0].cells.length;
+           
+            var x = row.insertCell(window.table.rows[0].cells.length);
+            x.classList.add("tHeader");
+            for(i=1; i<window.table.rows.length;i++)
+            {
+                row = window.table.rows[i]
+                x = row.insertCell(window.table.rows[i].cells.length);
+                x.setAttribute( "onClick", "indexer(this)" );
+                x.setAttribute( "contenteditable", "true" );
+                
+            }
+        }
+    else
+    {  
+        document.getElementById("colCheck").innerHTML = "Column index is: " + window.columnIndex;
+            var x = row.insertCell(window.columnIndex+1);
+            x.classList.add("tHeader");
+            for(i=1; i<window.table.rows.length;i++)
+            {
+                row = window.table.rows[i]
+                x = row.insertCell(window.columnIndex+1);
+                x.setAttribute( "onClick", "indexer(this)" );
+                x.setAttribute( "contenteditable", "true" );
+                
+            } 
+    }
+    window.updateColumnHead();
+  }
+  function updateColumnHead()
+  {
+    var row = document.getElementById("tblHeader");
+    for(var i=0;i<window.table.rows.cells.length;i++)
+
   }
 
   function indexer(x)
