@@ -6,14 +6,39 @@ let table;
 
 function onLoad()
 {
-    window.rowIndex = 1;
-    window.columnIndex = 0;
+    window.rowIndex = -1;
+    window.columnIndex = -1;
     window.rowCount=1;
     window.columnCount='a';
     window.table = document.getElementById("table");
     quoDelete();
+    window.table.addEventListener("click", function()
+        {
+            //alert("Event happened") //Test if event is working by uncommenting the command alert
+            quoDelete();
+        }
+        )
+    document.getElementById("rowCheck").innerHTML = "Row index is: " + window.rowIndex;
+    //alert("Welcome");
 
 }
+
+
+
+function quoDelete()
+{
+    let del = document.getElementById('btnDelteRow');
+    if(window.rowIndex>=1 && window.table.rows.length>2)
+    {
+        //alert("Disabled");
+        del.disabled=false;
+    }
+    else
+    {
+        del.disabled=true;
+    }
+}
+
 
 function addRow() {
     document.getElementById("rowCheck").innerHTML = "Row index is: " + window.rowIndex;
@@ -21,11 +46,13 @@ function addRow() {
     if(window.rowIndex==undefined || window.rowIndex==-1)
     {
         window.rowIndex==0;
-        row = window.table.insertRow();
+        row = window.table.insertRow(window.table.rows.length);
     }
     else
-    { 
-    row= window.table.insertRow(window.rowIndex+1);
+    {
+    try{row= window.table.insertRow(window.rowIndex+1);}
+    catch{row = window.table.insertRow(window.table.rows.length)}
+        
     } 
     let q;
         q=row.insertCell(0);
@@ -42,14 +69,18 @@ function addRow() {
     window.columnIndex = -1;
     window.updateRowNumber();
   }
-  function quoDelete()
-  {
-      let del = Document.getElementById('btnDelteRow');
-  }
+
 
   function deleteRow() {
-
-    row= window.table.deleteRow(window.rowIndex+1);
+    if(window.table.rows.length<=2)
+    {
+        alert("Cannot have 0 rows in the sheet");
+    }
+    else
+    {
+    row= window.table.deleteRow(window.rowIndex);
+    window.updateRowNumber();
+    }
 
   }
 
