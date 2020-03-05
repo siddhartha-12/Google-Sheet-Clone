@@ -16,6 +16,8 @@
 <button name="btnDeleteRow" id="btnDelteRow" onclick="deleteRow()">Delete Row</button>
 &nbsp;
 <button name="btnAddCol" id="btnAddCol" onclick="addColumn()">Add Column</button>
+&nbsp;
+<button name="btnAddCol" id="btnDelCol" onclick="deleteColumn()">Delete Column</button>
 <br>
 <br>
     <tr id="tblHeader">
@@ -27,14 +29,9 @@
         <td onclick="indexer(this)">
             1
         </td>
-        <td onclick="indexer(this)">12</td>
+        <td onclick="indexer(this)" contenteditable="true"></td>
     </tr>
-    <tr>
-        <td onclick="indexer(this)">
-            2
-        </td>
-        <td onclick="indexer(this)">14</td>
-    </tr>
+    
     
 
     </tr>
