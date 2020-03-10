@@ -279,3 +279,75 @@ function exportTableToCSV(filename) {
     // Download CSV file
     downloadCSV(csv.join("\n"), filename);
 }
+
+function Upload() {
+    let fileUpload = document.getElementById("fileUpload");
+    let regex = /.+(\.csv)$/;
+    if (regex.test(fileUpload.value.toLowerCase())) {
+        if (typeof (FileReader) != "undefined") {
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                window.tableEmpty();
+                // //var table = document.createElement("table");
+                let rows = e.target.result.split("\n");
+                let headerFlag = 0;
+                for (let i = 1; i < rows.length; i++) {
+                    let cells = rows[i].split(",");
+                    if(headerFlag==0)
+                    {
+                        let row = document.getElementById("tblHeader");
+                        for(let q=1;q<cells.length;q++)
+                        {
+                            let x = row.insertCell(window.table.rows[0].cells.length);
+                            x.classList.add("tHeader");
+                            x.setAttribute( "onClick", "indexer(this)" );
+                        }
+                        headerFlag=1;
+                    }
+                    if (cells.length > 1) {
+                        let row = window.table.insertRow(-1);
+                        let cell = row.insertCell(0);
+                        cell.setAttribute( "onClick", "indexer(this)" );
+                        for (let j = 1; j < cells.length; j++) {
+                            let cell = row.insertCell(-1);
+                            cell.innerHTML = cells[j];
+                            cell.setAttribute( "onClick", "indexer(this)" );
+                            cell.setAttribute( "contenteditable", "true" );
+                        }
+                        headerFlag=1;
+                    }
+                }
+                window.updateRowNumber();
+                window.updateColumnHead();
+                window.quoButton();
+            }
+            reader.readAsText(fileUpload.files[0]);
+        } else {
+            alert("This browser does not support HTML5.");
+        }
+    } else {
+        alert("Please upload a valid CSV file.");
+    }
+}
+
+function tableEmpty()
+{
+    let length = window.table.rows.length;
+    for(let i=1; i<length;i++)
+    {
+        row= window.table.deleteRow(length-i)      
+    }
+
+    let colLength = window.table.rows[0].cells.length;
+    for(let i=1; i<colLength;i++)
+    {
+        window.table.rows[0].deleteCell(colLength-i);       
+    }
+    
+}
+
+function getCellValue(cellAddress)
+{
+    alert("555")
+
+}
