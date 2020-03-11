@@ -154,7 +154,6 @@ function addRow() {
                 x = row.insertCell(window.columnIndex+1);
                 x.setAttribute( "onClick", "indexer(this)" );
                 x.setAttribute( "contenteditable", "true" );
-                
             } 
     }
     window.updateColumnHead();
@@ -198,7 +197,7 @@ function addRow() {
     let trr = x.parentNode.rowIndex;
     let tdd = x.cellIndex;
     if(window.rowIndex==trr && window.columnIndex==tdd)
-    {
+    {   
         rowIndex= 0;
         columnIndex= 0
     }
@@ -221,13 +220,13 @@ function updateRowNumber()
 }
 
 function exportTableToCSV(filename) {
-    var csv = [];
-    var rows = document.querySelectorAll("table tr");
+    let csv = [];
+    let rows = document.querySelectorAll("table tr");
     
-    for (var i = 0; i < rows.length; i++) {
-        var row = [], cols = rows[i].querySelectorAll("td, th");
+    for (let i = 0; i < rows.length; i++) {
+        let row = [], cols = rows[i].querySelectorAll("td, th");
         
-        for (var j = 0; j < cols.length; j++) 
+        for (let j = 0; j < cols.length; j++) 
             row.push(cols[j].innerText);
         
         csv.push(row.join(","));        
@@ -238,8 +237,8 @@ function exportTableToCSV(filename) {
 }
 
 function downloadCSV(csv, filename) {
-    var csvFile;
-    var downloadLink;
+    let csvFile;
+    let downloadLink;
 
     // CSV file
     csvFile = new Blob([csv], {type: "text/csv"});
@@ -264,13 +263,13 @@ function downloadCSV(csv, filename) {
 }
 
 function exportTableToCSV(filename) {
-    var csv = [];
-    var rows = document.querySelectorAll("table tr");
+    let csv = [];
+    let rows = document.querySelectorAll("table tr");
     
-    for (var i = 0; i < rows.length; i++) {
-        var row = [], cols = rows[i].querySelectorAll("td, th");
+    for (let i = 0; i < rows.length; i++) {
+        let row = [], cols = rows[i].querySelectorAll("td, th");
         
-        for (var j = 0; j < cols.length; j++) 
+        for (let j = 0; j < cols.length; j++) 
             row.push(cols[j].innerText);
         
         csv.push(row.join(","));        
@@ -288,7 +287,7 @@ function Upload() {
             let reader = new FileReader();
             reader.onload = function (e) {
                 window.tableEmpty();
-                // //var table = document.createElement("table");
+                // //let table = document.createElement("table");
                 let rows = e.target.result.split("\n");
                 let headerFlag = 0;
                 for (let i = 1; i < rows.length; i++) {
@@ -348,6 +347,7 @@ function tableEmpty()
 
 function getCellValue(cellAddress)
 {
-    alert("555")
+    alert("555");
+
 
 }
