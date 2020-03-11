@@ -1,9 +1,11 @@
-let rowIndex;
-let columnIndex;
-let rowCount;
-let columnCount;
-let table;
-
+let rowIndex; //Global variable which maintains the row index
+let columnIndex; //Global variable which maintains the column index
+let rowCount; //Global variable which maintains the row count
+let columnCount; //Global variable which maintains the column count
+let table; ////Global variable which maintains the table dom
+/* The function is executed during the first load of the web page. It is responsible to set the initial global variables
+that would track the current state of cells and their locations
+*/
 function onLoad()
 {
     window.rowIndex = -1;
@@ -13,6 +15,7 @@ function onLoad()
     window.table = document.getElementById("table");
     
     window.initialSetup();
+    // Adding event listener for updating the status quo of the buttons 
     window.table.addEventListener("click", function()
         {
             //alert("Event happened") //Test if event is working by uncommenting the command alert
@@ -23,7 +26,9 @@ function onLoad()
     //alert("Welcome");
 
 }
-
+/*
+This function is used to generate the intial excel rows and columns and is being called in the onload function
+*/
 function initialSetup()
 {
     for(let i=1;i<15;i++)
@@ -35,7 +40,10 @@ function initialSetup()
         window.addColumn();
     }
 }
-
+/*
+This function is responsible to maintain the status quo of the buttons. if the number of columns is at threshold, the
+add column function is disabled. If the number of rows is equal to the threshold, it disables the add row button
+*/
 function quoButton()
 {
     let del = document.getElementById('btnDelteRow');
@@ -72,7 +80,10 @@ function quoButton()
     }
 }
 
-
+/*
+The following function is used to insert the row at a state location. If not state is passed the row will be appended 
+at the end of the table. No row will be added if the threshold is reached.
+*/
 function addRow() {
     document.getElementById("rowCheck").innerHTML = "Row index is: " + window.rowIndex;
     let row;
@@ -104,8 +115,13 @@ function addRow() {
     window.quoButton();
   }
 
+/*
+The following function is used to delete the row at a state location. If not state is passed the row will be deleted from 
+the end of the table. No row will be deleted if only 1 row remains.
+*/
 
   function deleteRow() {
+    // Checking for row count validation
     if(window.table.rows.length<=2)
     {
         alert("Cannot have 0 rows in the sheet");
@@ -119,9 +135,14 @@ function addRow() {
 
   }
 
+ /*
+The following function is used to insert the column at a state location. If not state is passed the column will be appended 
+at the end of the table. No column will be added if the threshold is reached.
+*/ 
   function addColumn(){
 
     let row = document.getElementById("tblHeader");
+    // Checking for column count validation
     if(window.table.rows[0].cells.length>26)
     {
         alert("Cannot add more columns");
@@ -160,6 +181,12 @@ function addRow() {
     window.quoButton();
   }
 
+  
+/*
+The following function is used to delete the column at a state location. If no state is passed the column will be deleted from 
+the end of the table. No row will be deleted if only 1 row remains.
+*/
+
   function deleteColumn()
   {
       if(window.columnIndex==0)
@@ -181,7 +208,9 @@ function addRow() {
     window.quoButton();
   }
 
-
+/*
+The following funcion is responsible to update the header value(A,B,C..) after a column has been added or deleted
+*/
   function updateColumnHead()
   {
     let row = document.getElementById("tblHeader");
@@ -191,6 +220,11 @@ function addRow() {
     }
 
   }
+/*
+The following function is called at onclick event of the cell. The purpose of the function is to update the current
+pointers to the location of the current cell index and maintain the state so that operations like add column and delete
+column can be performed effectively
+*/
 
   function indexer(x)
   {
@@ -209,7 +243,9 @@ function addRow() {
     document.getElementById("tr").innerHTML = "Row index is: " + trr;
     document.getElementById("td").innerHTML = "Column index is: " + tdd;
   }
-
+/*
+The following funcion is responsible to update the row header value(1,2,3..) after a row has been added or deleted
+*/
 function updateRowNumber()
 {
     let i;
@@ -218,7 +254,9 @@ function updateRowNumber()
         window.table.rows[i].cells[0].innerHTML = i;
     }
 }
-
+/*
+The following functions combines the data from the html table and is used to create a downloadable CSV file 
+*/
 function exportTableToCSV(filename) {
     let csv = [];
     let rows = document.querySelectorAll("table tr");
@@ -235,6 +273,9 @@ function exportTableToCSV(filename) {
     // Download CSV file
     downloadCSV(csv.join("\n"), filename);
 }
+/*
+This function is used to initiate file download 
+*/
 
 function downloadCSV(csv, filename) {
     let csvFile;
@@ -279,6 +320,9 @@ function exportTableToCSV(filename) {
     downloadCSV(csv.join("\n"), filename);
 }
 
+/*
+The following function is to parse a csv file into HTML table. A regex is used see if the file extension is valid or not 
+*/
 function Upload() {
     let fileUpload = document.getElementById("fileUpload");
     let regex = /.+(\.csv)$/;
@@ -292,6 +336,7 @@ function Upload() {
                 let headerFlag = 0;
                 for (let i = 1; i < rows.length; i++) {
                     let cells = rows[i].split(",");
+                    // Checks for the header creations of the table. If the column header is generated the flag is turned true
                     if(headerFlag==0)
                     {
                         let row = document.getElementById("tblHeader");
@@ -328,7 +373,7 @@ function Upload() {
         alert("Please upload a valid CSV file.");
     }
 }
-
+//The following function is used to delete all the rows and columns of the table
 function tableEmpty()
 {
     let length = window.table.rows.length;
@@ -344,7 +389,7 @@ function tableEmpty()
     }
     
 }
-
+// The following is cellAddress test fuction
 function getCellValue(cellAddress)
 {
     alert("555");
