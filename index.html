@@ -3,11 +3,8 @@
 <head>
     <title>Assignment 6</title>
     <link rel="stylesheet" href="Dist/index.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.5.4/rxjs.umd.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.5.4/rxjs.umd.js.map"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.5.4/rxjs.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/6.5.4/rxjs.umd.min.js.map"></script>
-    <script src="Js/index.js"></script>
+    <script src="https://unpkg.com/rxjs@6.4.0/bundles/rxjs.umd.min.js"></script>
+    
     
 </head>
 <body onload="onLoad()">
@@ -28,8 +25,7 @@
 <input type="file" id="fileUpload" />
 <input type="button" id="upload" value="Upload" onclick="Upload()" />
 <br>
-
-<input type="button" id="rxjsTest" value="rxjsTest" />
+<input type="button" id="test" value="test" onclick="rxjsCall()" />
 <br>
 <br>
     <tr id="tblHeader">
@@ -37,22 +33,13 @@
         <th onclick="indexer(this)">A</th>
 
     </tr>
-    <tr>
-        <td onclick="indexer(this)">
-            1
-        </td>
-        <td onclick="indexer(this)" contenteditable="true"></td>
-    </tr>
-    
-    
-
-    </tr>
 </table> 
 <!-- Uncomment the below code to verify the current cell index -->
-<!-- <p id="tr"></p>
-<p id="td"></p>
-<p id="rowCheck"></p>
-<p id="colCheck"></p> -->
-    <script src="bundle.js"></script>
+<p id="tr" hidden=true></p>
+<p id="td" hidden=true></p>
+<p id="rowCheck" hidden=true></p>
+<p id="colCheck" hidden=true></p>
 </body>
+<script src="Js/index.js"></script>
+<!-- <script src="js/rxjs.js"></script> -->
 </html>

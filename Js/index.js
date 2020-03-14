@@ -1,3 +1,6 @@
+const { fromEvent } = rxjs;
+const { map, pipe } = rxjs.operators;
+
 let rowIndex; //Global variable which maintains the row index
 let columnIndex; //Global variable which maintains the column index
 let rowCount; //Global variable which maintains the row count
@@ -6,6 +9,9 @@ let table; ////Global variable which maintains the table dom
 /* The function is executed during the first load of the web page. It is responsible to set the initial global variables
 that would track the current state of cells and their locations
 */
+let formCells;
+let cells;
+//let fetchNumbers$;
 function onLoad()
 {
     window.rowIndex = -1;
@@ -13,7 +19,7 @@ function onLoad()
     window.rowCount=1;
     window.columnCount='a';
     window.table = document.getElementById("table");
-    
+    window.formCells = []
     window.initialSetup();
     // Adding event listener for updating the status quo of the buttons 
     window.table.addEventListener("click", function()
@@ -21,10 +27,9 @@ function onLoad()
             //alert("Event happened") //Test if event is working by uncommenting the command alert
             quoButton();
         }
-        )
+        ) 
     document.getElementById("rowCheck").innerHTML = "Row index is: " + window.rowIndex;
     //alert("Welcome");
-
 }
 /*
 This function is used to generate the intial excel rows and columns and is being called in the onload function
@@ -39,7 +44,11 @@ function initialSetup()
     {
         window.addColumn();
     }
+    
+    
 }
+
+
 /*
 This function is responsible to maintain the status quo of the buttons. if the number of columns is at threshold, the
 add column function is disabled. If the number of rows is equal to the threshold, it disables the add row button
@@ -79,6 +88,14 @@ function quoButton()
         addRow.disabled=true;
     }
 }
+function placeSwitch(x)
+{
+    console.log("Double switch");
+    if(x.title.length>1)
+    {
+        x.innerHTML = x.title;
+    }
+}
 
 /*
 The following function is used to insert the row at a state location. If not state is passed the row will be appended 
@@ -101,12 +118,23 @@ function addRow() {
     let q;
         q=row.insertCell(0);
         q.setAttribute( "onClick", "indexer(this)" );
+        
 
         for(i=1;i<window.table.rows[0].cells.length;i++)
         {
             q = row.insertCell(i);
             q.setAttribute( "onClick", "indexer(this)" );
+            q.setAttribute( "ondblclick","placeSwitch(this)");
             q.setAttribute( "contenteditable", "true" );
+            q.addEventListener('keydown', (evt) => {
+                if (evt.keyCode === 13) 
+                {
+                    checkFormula(evt.target.innerHTML);
+                    evt.preventDefault();
+                    //console.log("Enter pressed");
+                }
+            })
+            
             
         }
     window.rowIndex = -1;
@@ -160,7 +188,19 @@ at the end of the table. No column will be added if the threshold is reached.
                 row = window.table.rows[i]
                 x = row.insertCell(window.table.rows[i].cells.length);
                 x.setAttribute( "onClick", "indexer(this)" );
+                x.setAttribute( "ondblclick","placeSwitch(this)");
                 x.setAttribute( "contenteditable", "true" );
+                x.addEventListener('keydown', (evt) => {
+                    if (evt.keyCode === 13) 
+                    {
+                        //console.log("Value checking" + evt.target.innerHTML);
+                        checkFormula(evt.target);
+                        evt.preventDefault();
+                        checkFormula(x);
+                        //console.log("Enter pressed");
+                    }
+                });
+                
                 
             }
         }
@@ -261,10 +301,10 @@ function exportTableToCSV(filename) {
     let csv = [];
     let rows = document.querySelectorAll("table tr");
     
-    for (let i = 0; i < rows.length; i++) {
+    for (let i = 1; i < rows.length; i++) {
         let row = [], cols = rows[i].querySelectorAll("td, th");
         
-        for (let j = 0; j < cols.length; j++) 
+        for (let j = 1; j < cols.length; j++) 
             row.push(cols[j].innerText);
         
         csv.push(row.join(","));        
@@ -303,22 +343,7 @@ function downloadCSV(csv, filename) {
     downloadLink.click();
 }
 
-function exportTableToCSV(filename) {
-    let csv = [];
-    let rows = document.querySelectorAll("table tr");
-    
-    for (let i = 0; i < rows.length; i++) {
-        let row = [], cols = rows[i].querySelectorAll("td, th");
-        
-        for (let j = 0; j < cols.length; j++) 
-            row.push(cols[j].innerText);
-        
-        csv.push(row.join(","));        
-    }
 
-    // Download CSV file
-    downloadCSV(csv.join("\n"), filename);
-}
 
 /*
 The following function is to parse a csv file into HTML table. A regex is used see if the file extension is valid or not 
@@ -395,4 +420,237 @@ function getCellValue(cellAddress)
     alert("555");
 
 
+}
+
+function cellColumnId(letter)
+{
+ let index = 0;   
+ let colId=letter.charCodeAt(index);
+ return colId - 64;
+}
+     
+function generateFormula(stringVal)
+{   
+    
+    var formula = "";
+    let breaker = stringVal.split('')
+    let startPoint = breaker[6];
+    if(breaker[7]!=":")
+    {
+        startpoint = breaker[6] + breaker[7]
+    }
+    let endPoint = breaker[9];
+    if(breaker[10]!=")")
+    {
+        endPoint = breaker[9] + breaker[10];
+    }
+    let colValue = window.cellColumnId(breaker[5]); 
+    if(stringVal.substring(1,4).toLowerCase()=="sum")
+    {
+        for(let i= startPoint;i<endPoint;i++)
+        {
+            if(window.table.rows[i].cells[colValue].innerHTML!="")
+            {
+                formula=formula + window.table.rows[i].cells[colValue].innerHTML;
+                formula = formula + "+";
+            }
+        }
+        formula=formula + window.table.rows[endPoint].cells[colValue].innerHTML;     
+    }
+    else if(stringVal.substring(1,4).toLowerCase()=="mul")
+    {
+        for(let i= startPoint;i<endPoint;i++)
+        {
+            //console.log(i,colValue);
+            //console.log(window.table.rows[i].cells[colValue].innerHTML);
+
+            formula=formula + window.table.rows[i].cells[colValue].innerHTML;
+            formula = formula + "*";
+        }
+        formula=formula + window.table.rows[endPoint].cells[colValue].innerHTML;     
+    }
+    else if(stringVal.substring(1,4).toLowerCase()=="div")
+    {
+        for(let i= startPoint;i<endPoint;i++)
+        {
+            //console.log(i,colValue);
+            //console.log(window.table.rows[i].cells[colValue].innerHTML);
+
+            formula=formula + window.table.rows[i].cells[colValue].innerHTML;
+            formula = formula + "/";
+        }
+        formula=formula + window.table.rows[endPoint].cells[colValue].innerHTML;     
+    }
+    else if(stringVal.substring(1,4).toLowerCase()=="sub")
+    {
+        for(let i= startPoint;i<endPoint;i++)
+        {
+            //console.log(i,colValue);
+            //console.log(window.table.rows[i].cells[colValue].innerHTML);
+
+            formula=formula + window.table.rows[i].cells[colValue].innerHTML;
+            formula = formula + "-";
+        }
+        formula=formula + window.table.rows[endPoint].cells[colValue].innerHTML;     
+    }
+    else
+    {
+        
+        let currentVal = "";
+        for(let q=1;q<stringVal.length;q++)
+        {
+            //console.log(stringVal[q]);
+            if(stringVal[q]=="+" || stringVal[q]=="/" || stringVal[q]=="*" || stringVal[q]=="-" )
+            {
+                //console.log("Oper");
+                //formula = formula + (currentVal.substring(1,currentVal.length));
+                
+                //console.log("Updated Formula -" + formula );
+                if(currentVal!="")
+                {
+                   // console.log("------>" + currentVal);
+                    colValue = window.cellColumnId(currentVal[0]);
+                    //console.log("currentVal --- > " + currentVal);
+                    //console.log("Row index- >" + currentVal.substring(1,currentVal.length));
+                    if(window.table.rows[currentVal.substring(1,currentVal.length)].cells[colValue].innerHTML!="")
+                    {
+                    formula = formula + window.table.rows[currentVal.substring(1,currentVal.length)].cells[colValue].innerHTML;
+                    formula = formula + stringVal[q];
+                    }
+                }
+                //console.log(currentVal);
+                currentVal = "";
+            }
+            else
+            {
+                currentVal = currentVal+ stringVal[q];
+            }
+        }
+        colValue = window.cellColumnId(currentVal[0]);
+        //console.log("last row index - > "+currentVal);
+        if(window.table.rows[currentVal.substring(1,currentVal.length)].cells[colValue].innerHTML.length!=0)
+        {
+        formula = formula + window.table.rows[currentVal.substring(1,currentVal.length)].cells[colValue].innerHTML;
+        }
+        else
+        {
+            formula = formula+"0";
+        }
+
+        
+    }
+   // console.log("Formula - > "+ formula);
+    // console.log(eval(formula));
+    let ans = eval(formula);
+    if(ans == "Infinity")
+    {
+        ans = "err";
+    }
+    return(ans);
+}
+
+// onchange="myFunction()"
+
+function checkFormula(x)
+{
+    
+    let breaker = x.innerHTML;
+    //console.log("this is breaker" + breaker);
+    try
+    {
+    
+    if(breaker!=undefined && breaker[0]=="=")
+    {
+        let form = x.innerHTML;
+        x.innerHTML = generateFormula(x.innerHTML);
+        x.title = form;
+        window.formCells.push(x)
+    }
+    else
+    {
+        x.title = x.innerHTML;
+        if(window.formCells.includes(x))
+        {
+            window.formCells.pop(x);
+        }
+        //window.reRunFormula();
+    }
+
+    }
+    catch(err)
+    {
+        x.innerHTML="err";
+        //console.log(err);
+    }
+    finally
+    {
+       
+    }
+
+}
+function rxjsCall()
+{
+    //console.log("called");
+    const fetchNumbers$ = rxjs.fromEvent(document.querySelectorAll('tr td'), 'keydown');
+
+    //Subscriber
+    const storeValues = fetchNumbers$.subscribe((evt) => {
+        if (evt.keyCode === 13) 
+        {
+            checkFormula(evt.target);
+            evt.preventDefault();
+            console.log("Enter pressed in subscriber ->"+ evt.target.innerHTML);
+            reRunFormula();
+        }
+    });
+
+function reRunFormula()
+{
+   // console.log("Updating Formula");
+    window.formCells.forEach(element => {
+        console.log("Revamping formula "+ element.innerHTML);
+        element.innerHTML = element.title;
+        checkFormula(element);
+    });
+}
+
+
+function checkFormulaloop(x)
+{
+    
+    let breaker = x.innerHTML;
+    //console.log("this is breaker" + breaker);
+    try
+    {
+    
+    if(breaker.substring(0,1)=="=")
+    {
+        let form = x.innerHTML;
+        x.innerHTML = generateFormula(x.innerHTML);
+        x.title = form;
+        window.formCells.push(x)
+    }
+    else
+    {
+        x.title = x.innerHTML;
+        if(window.formCells.includes(x))
+        {
+            window.formCells.pop(x);
+        }
+        //window.reRunFormula();
+    }
+
+    }
+    catch(err)
+    {
+        x.innerHTML="err";
+        //console.log(err);
+    }
+    finally
+    {
+       
+    }
+}
+
+    
 }
