@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/neu-mis-info6150-spring-2020/assignment-6-siddhartha-1212#readme",
   "dependencies": {
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "rxjs": "^6.5.4",
     "ts-loader": "^6.2.1",
     "typescript": "^3.8.3",
